@@ -1,0 +1,99 @@
+ NAM FLEX9 TERMINAL IO DRIVERS
+ OPT PAG
+*******************************************
+*
+* TERMINAL I/O DRIVERS
+* FOR TSC FLEX 3.01
+*
+*******************************************
+CHPR EQU $C700 change process routine
+COLDST EQU $CD00 FLEX 9 cold start
+ACIA EQU $E004
+TIMER EQU $E012
+ ORG $D370
+* initalize acia
+ SPC 1
+INIT LDA #$13
+ STA ACIA
+ LDA #$11
+ STA ACIA
+ RTS
+ SPC 1
+*input one character from ACIA
+ SPC 1
+INPUT LDA ACIA
+ ANDA #$01
+ BEQ INPUT
+ LDA ACIA+1
+ ANDA #$7F
+ RTS
+ SPC 1
+*input with echo
+INCHE BSR INPUT get input
+ SPC 1
+*output one character to ACIA
+ SPC 1
+OUTPUT PSHS A
+OUTPT1 LDA ACIA
+ ANDA #$02
+ BEQ OUTPT1
+ PULS A
+ STA ACIA+1
+ RTS
+ SPC 1
+*get ACIA status
+ SPC 1
+STATUS PSHS A
+ LDA ACIA
+ ANDA #$01
+ PULS A
+ RTS
+ SPC 1
+*initialize timer
+ SPC 1
+TINIT LDX >TIMER
+ LDA #$FF
+ STA ,X
+ LDA #$3C
+ STA $01,X
+ LDA #$8F
+ STA ,X
+ LDA ,X
+ LDA #$3D
+ STA $01,X
+ RTS
+ SPC 1
+*timer on
+ SPC 1
+TIMON LDA #$04
+ STA TIMER
+ RTS
+ SPC 1
+*timer off
+ SPC 1
+TIMOFF LDA #$8F
+ STA TIMER
+ RTS
+ SPC 1
+*IRQ handler
+ SPC 1
+IHANDL LDA TIMER
+ JMP >CHPR
+ SPC 1
+ ORG $D3E5
+ FDB INPUT
+ FDB IHANDL
+ FDB SWIVEC
+ FDB IRQVEC
+ FDB TIMOFF
+ FDB TIMON
+ FDB TINIT
+ FDB MONITR
+ FDB INIT
+ FDB STATUS
+ FDB OUTPUT
+ FDB INCHE
+SWIVEC EQU $DFC2
+IRQVEC EQU $DFC8
+MONITR EQU $F814
+ END COLDST TRANSFER ADDRESS FOR FLEX
