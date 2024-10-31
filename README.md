@@ -8,6 +8,8 @@ I'll also need the source to the command use in Flex. Most of the commands are n
 
 # Repos layout description
 
+| Dir | Description |
+| --- | --- |
 | Bugs | Source to Rom monitors |
 | Flex3 | Base Flex 3 OS |
 | Flex2 | Base Flex 2 OS |
